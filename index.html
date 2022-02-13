@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Web Québec</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/style/style.css">
+
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+        integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.4/dist/esri-leaflet.js"
+        integrity="sha512-oUArlxr7VpoY7f/dd3ZdUL7FGOvS79nXVVQhxlg6ij4Fhdc4QID43LUFRs7abwHNJ0EYWijiN5LP2ZRR2PY4hQ=="
+        crossorigin=""></script>
+
+    <!-- Load Esri Leaflet Geocoder from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@3.0.0/dist/esri-leaflet-geocoder.css">
+    <script src=" https://unpkg.com/esri-leaflet-geocoder@3.0.0/dist/esri-leaflet-geocoder.js">
+    </script>
+
+    <!-- Load Esri Leaflet Vector from CDN -->
+    <script src="https://unpkg.com/esri-leaflet-vector@3.1.1/dist/esri-leaflet-vector.js"
+        integrity="sha512-7rLAors9em7cR3/583gZSvu1mxwPBUjWjdFJ000pc4Wpu+fq84lXF1l4dbG4ShiPQ4pSBUTb4e9xaO6xtMZIlA=="
+        crossorigin=""></script>
+
+    <!-- <script src="https://unpkg.com/esri-leaflet-renderers@2.0.6"></script> -->
+
+    <!-- C'est mon connexion cle de Arc -->
+    <script src="cleAPI.js"></script>
+
+
+    <script src="vdqlieupublic.js"></script>
+    <script src="reseaucyclable.js"></script>
+
+</head>
+
+<body>
+    <header class="container-fluid fondfluid">
+        <div class="container-fluid d-flex flex-column flex-md-row align-items-center m-4 textequebec">
+
+            <a href="https://www.ville.quebec.qc.ca/" target="_blank"
+                class="d-flex align-items-center text-decoration-none align-items-center">
+                <img class="bi me-3" src="./assets/images/VDQ_rgb.png" width="100" alt="Logo">
+                <span class="ville textequebec fs-3"> Bienvenue à notre ville !</span>
+            </a>
+
+            <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto align-items-center">
+                <span id="AffichePosition" class="navbar-text text-end pe-2">Clique ici pour savoir votre
+                    géolocalisation
+                </span>
+                <a href="#" id="activerLocalisation" class="btn me-3 py-2 text-decoration-none"><i
+                        class="fas fa-universal-access"></i></a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="container-fluid">
+        <div id="legend">
+            <img src="assets/images/legend.png" alt="Legend de points" width="30%">
+        </div>
+        <div id="map"></div>
+        <div id="query" class="leaflet-bar">
+            <label>
+                Point d'accès à internet:
+                <select id="requete">
+                    <!-- make sure to encase string values in single quotes for valid sql -->
+                    <option value="1=1">Tous</option>
+                    <option value="ARRONDISSEMENT='La Haute-Saint-Charles'">La Haute-Saint-Charles</option>
+                    <option value="ARRONDISSEMENT='Sainte-Foy–Sillery–Cap-Rouge'">Sainte-Foy–Sillery–Cap-Rouge</option>
+                    <option value="ARRONDISSEMENT='Hôtel de ville de L'Ancienne-Lorette'">Hôtel de ville de
+                        L'Ancienne-Lorette</option>
+                    <option value="ARRONDISSEMENT='Les Rivières'">Les Rivières</option>
+                    <option value="ARRONDISSEMENT='Charlesbourg'">Charlesbourg</option>
+
+                </select>
+            </label>
+        </div>
+
+    </main>
+
+    <script>
+        const infos = document.getElementById("infos");
+
+        //Carte centré et sans zoom
+        let maCarte = L.map('map', { "zoomControl": false }).setView([46.83, -71.3], 12);
+
+        //Requete
+        const requete = document.getElementById('requete');
+
+        //Ma carte avec vectorBasemaplayer avec cleAPI et choisir le fond 
+        const rues = L.esri.Vector.vectorBasemapLayer('ArcGIS:Community', {
+            apikey: cleAPI
+        });
+
+        rues.addTo(maCarte);
+
+        const lightGray = L.esri.Vector.vectorBasemapLayer('ArcGIS:LightGray', {
+            apikey: cleAPI
+        });
+
+
+        //couche zones d'accés public sans fil, , donnée en ligne avec service REST, serveur
+        const zoneaccessansfil = L.esri.featureLayer({
+            url: 'https://services6.arcgis.com/pG4MNR4EC4WmfCRT/ArcGIS/rest/services/vdq_zonesaccessansfil/FeatureServer/0',
+
+        }).bindPopup(function (layer) {
+            return layer.feature.properties.NOM_LIEU;
+        })
+        // .addTo(maCarte);
+
+        //requete
+        requete.addEventListener('change', () => zoneaccessansfil.setWhere(requete.value));
+
+
+
+        // //Couche reseau cyclable, format geoJSON
+        const rcyclable = L.geoJSON(reseaucyclable, {
+            style: function (feature) {
+                return { color: "#0ac40a" };
+            }
+        }).bindPopup(function (layer) {
+            return layer.feature.properties.NOM_TOPOGRAPHIE;
+        })
+        // .addTo(maCarte);
+
+
+        // Layer avec icon de place public
+        const placeIcon = L.icon({
+            iconUrl: './assets/images/edifice.png',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+            popupAnchor: [-2, -2],
+        })
+
+        const personneIcon = L.icon({
+            iconUrl: './assets/images/universal-access-solid.svg',
+            iconSize: [35, 35],
+            iconAnchor: [15, 15],
+            popupAnchor: [-2, -2],
+        })
+
+        // Couche lieu public, format geoJSON
+        const lieupublic = L.geoJSON(vdqlieupublic, {
+            pointToLayer: function (geoJsonPoint, latlng) {
+                return L.marker(latlng, { icon: placeIcon });
+            }
+        }).bindPopup(function (layer) {
+            return layer.feature.properties.NOM_TOPOGRAPHIE;
+        })
+        // .addTo(maCarte);
+
+
+
+        //Control
+        var baseLayers = {
+            "Rues": rues,
+            "LightGray": lightGray,
+        };
+
+        var overlays = {
+            "Lieux publics": lieupublic,
+            "Réseau cyclable": rcyclable,
+            "Point d'accés à internet": zoneaccessansfil,
+        };
+
+        L.control.layers(baseLayers, overlays).addTo(maCarte);
+
+
+        //L a barre d'echelle avec largeur
+        L.control.scale({ "imperial": false, "maxWidth": 150 }).addTo(maCarte);
+
+        L.control.zoom({
+            position: 'topleft',
+            zoomInTitle: "Zoom avant"
+        }).addTo(maCarte);
+
+
+        //attribution
+        L.control.attribution().addAttribution("Isabela Lara").addTo(maCarte);
+
+
+        // URL Meteo
+        const urlMeteo = "https://api.openweathermap.org/data/2.5/weather?q=Quebec&units=metric&lang=fr&appid=b80bebbe6af6a7f45ca0fda7dad54582";
+
+        const groupe = L.layerGroup();
+        groupe.addTo(maCarte);
+
+        let xhttp = new XMLHttpRequest();
+
+        //Callback au changement d'état - Afficher la météo - Permettre chercher l'icon
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4 && this.status == 200) {
+                let fichierJSON = JSON.parse(xhttp.responseText);
+
+                afficheMeteo({
+                    temperature: fichierJSON.main.temp,
+                    description: fichierJSON.weather[0].description,
+                    urlIcon: `http://openweathermap.org/img/w/${fichierJSON.weather[0].icon}.png`,
+                    coords: fichierJSON.coord
+                })
+            };
+        }
+        xhttp.open("GET", urlMeteo);
+        xhttp.send();
+
+        //Il va chercher les coord / concatenar
+        function afficheMeteo(objMeteo) {
+            let centre = L.latLng(objMeteo.coords.lat, objMeteo.coords.lon);
+            let label = L.marker(centre, {
+                icon: L.divIcon({
+                    className: 'label',
+                    html: '<div><img src="' + objMeteo.urlIcon + '" title="' + objMeteo.description + '"><p>' + objMeteo.temperature + ' C&deg;</p></div>'
+                })
+            }).addTo(groupe);
+        }
+
+
+        //Pour avoir lien avec le bouton
+        const bouton = document.getElementById("activerLocalisation");
+        const pPosition = document.getElementById("AffichePosition");
+
+
+        // Chaque fois un click, je vais appeler la function getPosition
+        bouton.addEventListener('click', getPosition);
+
+        // Il va activer la geolocalisation, il va chercher la function getCurrentPosition
+        function getPosition() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(affichePosition, afficheErreur);
+            } else {
+                pPosition.innerHTML = "Problème!"
+            }
+        }
+
+        //Appel la function avec la position, let a le coordonnée 
+        function affichePosition(position) {
+            let lat = position.coords.latitude;
+            let long = position.coords.longitude;
+            let precision = position.coords.accuracy;
+
+            //Pour montrer mon position avec Popup
+            L.marker([lat, long], { icon: personneIcon }).addTo(maCarte)
+                .bindPopup('Vous êtes ici !')
+                .openPopup();
+
+
+
+            //Methode pour faire zoom sur la position - flyTo
+            maCarte.flyTo(L.latLng(lat, long), 13);
+        }
+
+        //Afiche l'erreur
+        function afficheErreur(erreur) {
+            pPosition.innerHTML = "Problème!";
+        }
+
+
+        //Code Champ de recherche, Layergroup
+        const couchePoints = L.layerGroup();
+        couchePoints.addTo(maCarte);
+
+        const searchControl = L.esri.Geocoding.geosearch({
+            position: "topright",
+            placeholder: "Entrer une adresse",
+            useMapBounds: false,
+            providers: [L.esri.Geocoding.arcgisOnlineProvider({
+                apikey: cleAPI,
+                nearby: {
+                    lat: 46,
+                    lng: -71
+                },
+            })]
+        }).addTo(maCarte);
+
+        //Effacer le dernier point et donner Popup avec info
+        searchControl.on("results", (data) => {
+            for (let i = 0; i < data.results.length; i++) {
+                couchePoints.clearLayers();
+                let marqueur = L.marker(data.results[i].latlng);
+                marqueur.bindPopup(data.results[i].text).openPopup();
+                marqueur.addTo(couchePoints);
+            }
+        });
+
+    </script>
+
+    <footer class="container-fluid border-bottom">
+        <div class="row d-flex flex-wrap p-5 fondfluid text-black">
+            <p
+                class="col-md-6 col-sm-12 d-flex nav justify-content-md-start justify-content-sm-start align-items-end list-unstyled d-flex text-start">
+                <strong>Instructions&nbsp;:</strong> Vous trouverez un menu à droite où vous pourrez sélectionner et
+                rechercher des informations ponctuelles pour vous orienter au Québec.
+            </p>
+
+            <p
+                class="pt-sm-3 col-md-6 col-sm-12 d-flex nav justify-content-md-end justify-content-sm-start align-items-end list-unstyled d-flex text-start">
+                Design application&nbsp;: Isabela Lara
+            </p>
+        </div>
+    </footer>
+
+</body>
+
+
+
+</html>
