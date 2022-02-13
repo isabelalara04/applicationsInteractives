@@ -1,0 +1,149 @@
+        
+        /* temporal */
+        /* html, body{
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }         */
+        
+        
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    /* temporal */
+        /* body > .container-fluid {
+            padding: 20px 0;
+    } */
+
+        header {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            left: 0px;
+            height: 15%;
+        }
+
+        #map {
+            /* display:block; */
+            /* width: auto; */
+            position: absolute;
+            top: 15%;
+            right: 0;
+            left: 0; 
+            height: 75%;
+        }
+
+        /* Legend */
+        #legend {
+            position: absolute;
+            top: 512px;
+            right: -440px;
+            z-index: 401;
+        }
+
+         /* Meteo Donner espace entre l'etiquette et le texte */
+         .label div {
+            text-align: center;
+            width: 100px;
+            position: relative;
+            left: -50%;
+            top: -10px;
+            text-shadow: 0px 2px 1px rgba(255, 255, 255, 0.85);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .fondfluid {
+            background-color: #FAAB4E;
+        }
+
+        .textequebec {
+            color: #0c58a9;
+        }
+
+        #infos {
+            height: 100px;
+            width: 200px;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            z-index: 401;
+            background: white;
+            padding: 1em;
+        }
+
+        .btn {
+            border: none;
+            color: white;
+            padding: 3px;
+            font-size: 50px;
+            cursor: pointer;
+            box-shadow: none !important;
+        }
+
+        .btn:hover {
+            color: #136ED1;
+        }
+
+        .ville:hover {
+            color: #ffffff;
+        }
+
+        .btn:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        #query {
+            position: absolute;
+            top: 725px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 1em;
+            font-size: 0.9em;
+        }
+
+        #query select {
+            font-size: 0.9em;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            left:0px;
+            height: 10%;
+        }
+
+        @media screen and (max-width: 766px) {
+
+            header {
+                height: 22%;
+                width: 100%;
+            }
+
+            #map {
+                top: 22%;
+                height: 60%;
+            }
+
+            nav {
+                border-top: 2px solid #ffffff;
+            }
+
+            /* Legend */
+            #legend{
+                top: 435px;
+                right: -440px;
+            }
+
+            #query {
+                top: 650px;
+            }
+
+            footer {
+                height: 18%;
+            }
+    }
