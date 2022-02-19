@@ -51,9 +51,9 @@
 
 </head>
 
-<body>
+<body class="d-flex flex-column">
     <header class="container-fluid fondfluid">
-        <div class="container-fluid d-flex flex-column flex-md-row align-items-center m-4 textequebec">
+        <div class="container-fluid d-flex flex-column flex-md-row align-items-center textequebec">
 
             <a href="https://www.ville.quebec.qc.ca/" target="_blank"
                 class="d-flex align-items-center text-decoration-none align-items-center">
@@ -72,7 +72,8 @@
         </div>
     </header>
 
-    <main class="container-fluid">
+    <main class="container-fluid flex-shrink-0 p-0">
+
         <div id="legend">
             <img src="assets/images/legend.png" alt="Legend de points" width="30%">
         </div>
@@ -84,17 +85,33 @@
                     <!-- make sure to encase string values in single quotes for valid sql -->
                     <option value="1=1">Tous</option>
                     <option value="ARRONDISSEMENT='La Haute-Saint-Charles'">La Haute-Saint-Charles</option>
-                    <option value="ARRONDISSEMENT='Sainte-Foy–Sillery–Cap-Rouge'">Sainte-Foy–Sillery–Cap-Rouge</option>
+                    <option value="ARRONDISSEMENT='Sainte-Foy–Sillery–Cap-Rouge'">Sainte-Foy–Sillery–Cap-Rouge
+                    </option>
                     <option value="ARRONDISSEMENT='Hôtel de ville de L'Ancienne-Lorette'">Hôtel de ville de
                         L'Ancienne-Lorette</option>
                     <option value="ARRONDISSEMENT='Les Rivières'">Les Rivières</option>
                     <option value="ARRONDISSEMENT='Charlesbourg'">Charlesbourg</option>
-
                 </select>
             </label>
         </div>
 
+
     </main>
+
+    <footer class="container-fluid border-bottom">
+        <div class="row d-flex flex-wrap p-5 fondfluid text-black">
+            <p
+                class="col-md-6 col-sm-12 d-flex nav justify-content-md-start justify-content-sm-start align-items-end list-unstyled d-flex text-start">
+                <strong>Instructions&nbsp;:</strong> Vous trouverez un menu à droite où vous pourrez sélectionner et
+                rechercher des informations ponctuelles pour vous orienter au Québec.
+            </p>
+
+            <p
+                class="pt-sm-3 col-md-6 col-sm-12 d-flex nav justify-content-md-end justify-content-sm-start align-items-end list-unstyled d-flex text-start">
+                <strong>Design application&nbsp;:</strong>&nbsp;Isabela Lara
+            </p>
+        </div>
+    </footer>
 
     <script>
         const infos = document.getElementById("infos");
@@ -117,7 +134,7 @@
         });
 
 
-        //couche zones d'accés public sans fil, , donnée en ligne avec service REST, serveur
+        //couche zones d'accés public sans fil, donnée en ligne avec service REST, serveur
         const zoneaccessansfil = L.esri.featureLayer({
             url: 'https://services6.arcgis.com/pG4MNR4EC4WmfCRT/ArcGIS/rest/services/vdq_zonesaccessansfil/FeatureServer/0',
 
@@ -128,7 +145,6 @@
 
         //requete
         requete.addEventListener('change', () => zoneaccessansfil.setWhere(requete.value));
-
 
 
         // //Couche reseau cyclable, format geoJSON
@@ -168,7 +184,6 @@
         // .addTo(maCarte);
 
 
-
         //Control
         var baseLayers = {
             "Rues": rues,
@@ -184,7 +199,7 @@
         L.control.layers(baseLayers, overlays).addTo(maCarte);
 
 
-        //L a barre d'echelle avec largeur
+        //La barre d'echelle avec largeur
         L.control.scale({ "imperial": false, "maxWidth": 150 }).addTo(maCarte);
 
         L.control.zoom({
@@ -261,7 +276,6 @@
                 .openPopup();
 
 
-
             //Methode pour faire zoom sur la position - flyTo
             maCarte.flyTo(L.latLng(lat, long), 13);
         }
@@ -301,23 +315,6 @@
 
     </script>
 
-    <footer class="container-fluid border-bottom">
-        <div class="row d-flex flex-wrap p-5 fondfluid text-black">
-            <p
-                class="col-md-6 col-sm-12 d-flex nav justify-content-md-start justify-content-sm-start align-items-end list-unstyled d-flex text-start">
-                <strong>Instructions&nbsp;:</strong> Vous trouverez un menu à droite où vous pourrez sélectionner et
-                rechercher des informations ponctuelles pour vous orienter au Québec.
-            </p>
-
-            <p
-                class="pt-sm-3 col-md-6 col-sm-12 d-flex nav justify-content-md-end justify-content-sm-start align-items-end list-unstyled d-flex text-start">
-                Design application&nbsp;: Isabela Lara
-            </p>
-        </div>
-    </footer>
-
 </body>
-
-
 
 </html>

@@ -1,46 +1,32 @@
-        
-        /* temporal */
-        /* html, body{
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-        }         */
-        
-        
         body {
             margin: 0;
             padding: 0;
         }
-    /* temporal */
-        /* body > .container-fluid {
-            padding: 20px 0;
-    } */
 
         header {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            left: 0px;
-            height: 15%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 10px 0;
         }
 
         #map {
-            /* display:block; */
-            /* width: auto; */
-            position: absolute;
-            top: 15%;
-            right: 0;
-            left: 0; 
-            height: 75%;
+            min-height: 75vh;
+            z-index: 10;
         }
 
         /* Legend */
         #legend {
             position: absolute;
-            top: 512px;
-            right: -440px;
+            bottom: 130px;
+            right: -438px;
             z-index: 401;
         }
+
+        main {
+            position: relative;
+            width: 100%;
+        }
+        
 
          /* Meteo Donner espace entre l'etiquette et le texte */
          .label div {
@@ -97,8 +83,8 @@
 
         #query {
             position: absolute;
-            top: 725px;
-            right: 10px;
+            bottom: 55px;
+            right: 15px;
             z-index: 1000;
             background: white;
             padding: 1em;
@@ -109,25 +95,7 @@
             font-size: 0.9em;
         }
 
-        footer {
-            position: absolute;
-            bottom: 0px;
-            right: 0px;
-            left:0px;
-            height: 10%;
-        }
-
         @media screen and (max-width: 766px) {
-
-            header {
-                height: 22%;
-                width: 100%;
-            }
-
-            #map {
-                top: 22%;
-                height: 60%;
-            }
 
             nav {
                 border-top: 2px solid #ffffff;
@@ -135,15 +103,11 @@
 
             /* Legend */
             #legend{
-                top: 435px;
+                bottom: 130px;
                 right: -440px;
             }
 
             #query {
-                top: 650px;
-            }
-
-            footer {
-                height: 18%;
+                bottom: 55px;
             }
     }
